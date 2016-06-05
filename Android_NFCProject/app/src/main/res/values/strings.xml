@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">NFCProject</string>
+    <string name="login_bt">Login</string>
+    <string name="exit_bt">Exit</string>
+</resources>
