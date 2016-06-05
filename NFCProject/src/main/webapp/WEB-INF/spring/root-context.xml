@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+		http://www.springframework.org/schema/beans/spring-beans.xsd 
+		http://www.springframework.org/schema/context 
+		http://www.springframework.org/schema/context/spring-context.xsd"
+		
+	>
+	
+	<!-- Root Context: defines shared resources visible to all other web components -->
+		
+	<context:component-scan base-package="com.nfc.project" />
+		
+		
+		<bean id="ds" 
+      class="org.apache.commons.dbcp.BasicDataSource">
+      <property name="driverClassName" value="com.mysql.jdbc.Driver"/>
+      <property name="url" value="jdbc:mysql://localhost:3306/nfcproject"/>
+      <property name="username" value="root"/>
+      <property name="password" value="apmsetup"/>
+   </bean>
+   
+   <bean id = "temp" class = "org.springframework.jdbc.core.JdbcTemplate">
+   		<property name="dataSource" ref="ds"/>
+   </bean>
+   
+   <bean id="UserDAOImpl" class="com.nfc.project.dao.UserDAOImpl">
+   		<property name="template" ref="temp"></property>
+   </bean>
+   
+   <bean id="LessonDAOImpl" class="com.nfc.project.dao.LessonDAOImpl">
+   		<property name="template" ref="temp"></property>
+   </bean>
+   
+   
+   <context:annotation-config /> 
+		
+</beans>
