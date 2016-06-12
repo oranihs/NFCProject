@@ -172,8 +172,12 @@ public class LessonDAOImpl {
 		int day = Calendar.getInstance().get(Calendar.DAY_OF_WEEK);
 
 		//timeStamp , day 테스트용 날짜 임의 설정
+		//day = 1 일 , 2 월 , 3 화
 		timeStamp = "2016-06-06,19:05";
-		day = 3;
+		day = 2;
+	
+		
+		
 		if(template.queryForInt(sql, new Object[]{id,timeStamp.split(",")[0],vo.getLessonCode(),vo.getClassNo()}) != 0){
 			return 0;
 		}
@@ -182,7 +186,7 @@ public class LessonDAOImpl {
 		int minutes = Integer.parseInt(timeStamp.split(",")[1].split(":")[1]);
 		
 		ArrayList<String> lessonTimeList = (ArrayList<String>)vo.getLessonTime();
-		int index =0;
+		int index =-1;
 		for (int i = 0; i < lessonTimeList.size(); i++) {
 			if(lessonTimeList.get(i).contains(dayOfWeek[day])){
 				index = i;
