@@ -103,6 +103,7 @@ public class UserDAOImpl implements UserDAO {
 		
 		LessonVO vo;
 		String before ="";
+		lessonList = new ArrayList<LessonVO>();
 		for(int i = 0 ; i < resultList.size() ; i++){
 			String lessonCode = (String) resultList.get(i).get("LessonCode");
 			
@@ -117,8 +118,10 @@ public class UserDAOImpl implements UserDAO {
 				vo.setLessonTime(lessonTimeList);
 
 				ArrayList<String> lessonPlaceList = new ArrayList<String>();
-				lessonTimeList.add((String) resultList.get(i).get("placeNo"));
+				lessonPlaceList.add((String) resultList.get(i).get("placeNo"));
 				vo.setPlaceNo(lessonPlaceList);
+				
+				lessonList.add(vo);
 			}else{
 				int getNo = findLessonList(lessonList, lessonCode);
 				lessonList.get(getNo).getLessonTime().add((String) resultList.get(i).get("lessonTime"));

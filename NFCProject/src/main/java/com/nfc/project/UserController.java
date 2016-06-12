@@ -81,12 +81,16 @@ public class UserController {
 	
 	// 나의 수업 리스트 출력
 	@RequestMapping(value = "/getLessonList", method = RequestMethod.GET,  produces="application/json;charset=UTF-8")
-	public @ResponseBody org.json.JSONArray getLessonList(@RequestParam("id") String id ){
+	public @ResponseBody JSONArray getLessonList(@RequestParam("id") String id ){
 		
 			ArrayList<LessonVO> resultList =  userImpl.selectUserLessonList(id);
 			
-			org.json.JSONArray resultArray = new org.json.JSONArray(resultList);
+			JSONArray resultArray = new JSONArray();
 			
+			for (int i = 0; i < resultList.size(); i++) {
+				System.out.println(resultList.get(i).toString());
+				resultArray.add(new LessonVO().createJSON(resultList.get(i)));
+			}
 			
 		return resultArray;
 	}

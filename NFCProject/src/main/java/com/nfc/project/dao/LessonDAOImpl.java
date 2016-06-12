@@ -121,13 +121,12 @@ public class LessonDAOImpl {
 			result =	template.update(sql,new Object[]{id,seatX,seatY,placeNo});
 			if(result == 1){
 				json.put("placeResult", "true");
-				json.put("error", "자리 입력 성공 ");
 				result =  checkLessonInfo(id, vo,-1);
 				if(result == 1){
 					json.put("checkResult", "true");
 				}else if(result == -1){
 					json.put("checkResult", "false");
-					json.put("error", "자리 입력 성공 /출석 체크  실패 , 아직 출석 체크 시간 아님");
+					json.put("error", "자리 입력 성공 /출석 체크  실패 , 아직 출석 체크 시간 아님 ");
 				}else{
 					json.put("checkResult", "false");
 					json.put("error", "자리 입력 성공 /출석 체크  실패 , 이미 해당수업 출석체크 함<자리만 이동 >");

@@ -1,5 +1,7 @@
 package com.nfc.project.vo;
 
+import org.json.simple.JSONObject;
+
 public class UserVO {
 
 		private String id;

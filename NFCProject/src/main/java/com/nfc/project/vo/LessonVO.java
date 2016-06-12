@@ -2,6 +2,8 @@ package com.nfc.project.vo;
 
 import java.util.List;
 
+import org.json.simple.JSONObject;
+
 public class LessonVO {
 	private String classNo;
 	private String lessonCode;
@@ -75,6 +77,18 @@ public class LessonVO {
 	public String toString() {
 		return "LessonVO [classNo=" + classNo + ", lessonCode=" + lessonCode + ", teacher=" + teacher + ", lessonName="
 				+ lessonName + ", lessonTime=" + lessonTime + ", placeNo=" + placeNo + "]";
+	}
+	
+	public JSONObject createJSON(LessonVO vo){
+		JSONObject obj = new JSONObject();
+		obj.put("classNo", vo.getClassNo());
+		obj.put("lessonCode", vo.getLessonCode());
+		obj.put("teacher", vo.getTeacher());
+		obj.put("lessonName", vo.getLessonName());
+		obj.put("lessonTime", vo.getLessonTime());
+		obj.put("placeNo", vo.getPlaceNo());
+		
+		return obj;
 	}
 	
 }
