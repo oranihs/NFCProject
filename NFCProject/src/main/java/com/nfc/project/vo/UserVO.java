@@ -20,6 +20,14 @@ public class UserVO {
 			this.name = name;
 			this.type = type;
 		}
+		
+		
+		
+		public UserVO(String id, String name) {
+			super();
+			this.id = id;
+			this.name = name;
+		}
 		public String getId() {
 			return id;
 		}

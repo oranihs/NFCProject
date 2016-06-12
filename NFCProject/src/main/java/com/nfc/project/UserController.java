@@ -19,6 +19,7 @@ import org.apache.http.protocol.HTTP;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONException;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,7 +46,7 @@ public class UserController {
 	@Autowired
 	LessonDAOImpl lessonImpl ;		
 	
-	
+	// 해당 아이디 있는지 확인
 	@RequestMapping(value = "/haveUser", method = RequestMethod.GET,  produces="application/json")
 	public @ResponseBody JSONObject home(@RequestParam("id") String id) {
 		 // Test
@@ -55,6 +56,7 @@ public class UserController {
 		return json;
 	}
 	
+	//로그인 
 	@RequestMapping(value = "/Login", method = RequestMethod.POST,  produces="application/json")
 	public @ResponseBody JSONObject Login(@RequestParam("id") String id , @RequestParam("pw") String pw){
 		
@@ -77,6 +79,28 @@ public class UserController {
 		return json;
 	}
 	
+	// 나의 수업 리스트 출력
+	@RequestMapping(value = "/getLessonList", method = RequestMethod.GET,  produces="application/json;charset=UTF-8")
+	public @ResponseBody org.json.JSONArray getLessonList(@RequestParam("id") String id ){
+		
+			ArrayList<LessonVO> resultList =  userImpl.selectUserLessonList(id);
+			
+			org.json.JSONArray resultArray = new org.json.JSONArray(resultList);
+			
+			
+		return resultArray;
+	}
+	
+	
+	//  해당 과목 출석 리스트 출력
+	//  결석 0 ,출석 1  , 지각 2 
+	//  결과데이터 date 날짜 , status 출석 상태  
+	@RequestMapping(value = "/getCheckList", method = RequestMethod.GET,  produces="application/json;charset=UTF-8")
+	public @ResponseBody JSONArray getCheckList(@RequestParam("id") String id,@RequestParam("lessonCode") String lessonCode, @RequestParam("classNo") String classNo){
+		return userImpl.selectUserCheckList(id, lessonCode, classNo);
+	}
+	
+	// 회원가입
 	@RequestMapping(value = "/Signup", method = RequestMethod.POST,  produces="application/json")
 	public @ResponseBody JSONObject Sinup(@RequestParam("id") String id , @RequestParam("pw") String pw){
 		
@@ -188,5 +212,10 @@ public class UserController {
 		json.put("result", "true");
 		return json;
 	}
+
+	
+	
+	
+	
 	
 }

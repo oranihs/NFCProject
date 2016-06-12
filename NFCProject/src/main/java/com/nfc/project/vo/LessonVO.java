@@ -1,12 +1,14 @@
 package com.nfc.project.vo;
 
+import java.util.List;
+
 public class LessonVO {
 	private String classNo;
 	private String lessonCode;
 	private String teacher;
 	private String lessonName;
-	private String lessonTime[];
-	private String placeNo;
+	private List<String> lessonTime;
+	private List<String> placeNo;
 	public String getClassNo() {
 		return classNo;
 	}
@@ -34,22 +36,23 @@ public class LessonVO {
 	
 	
 	
-	public String[] getLessonTime() {
+	public List<String> getLessonTime() {
 		return lessonTime;
 	}
-	public void setLessonTime(String[] lessonTime) {
-		this.lessonTime = lessonTime;
-	}
-	public String getPlaceNo() {
+	public List<String> getPlaceNo() {
 		return placeNo;
 	}
-	public void setPlaceNo(String placeNo) {
+	public void setLessonTime(List<String> lessonTime) {
+		this.lessonTime = lessonTime;
+	}
+	public void setPlaceNo(List<String> placeNo) {
 		this.placeNo = placeNo;
 	}
 	
 	
-	public LessonVO(String classNo, String lessonCode, String teacher, String lessonName, String[] lessonTime,
-			String placeNo) {
+
+	public LessonVO(String classNo, String lessonCode, String teacher,
+			String lessonName, List<String> lessonTime, List<String> placeNo) {
 		super();
 		this.classNo = classNo;
 		this.lessonCode = lessonCode;
