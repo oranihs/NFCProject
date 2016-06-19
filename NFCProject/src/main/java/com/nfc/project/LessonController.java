@@ -56,8 +56,24 @@ public class LessonController {
 		return lessonImpl.getNotCheckList(vo);
 	}
 	
+	// 해당 수업 출석체크 안한 사람 출력
+		@RequestMapping(value = "/getNotCheckListAJAX", method = RequestMethod.POST,  produces="application/json")
+		public @ResponseBody JSONArray getNotCheckListAJAX(@RequestBody String data) {
+			String lessonCode = null , classNo = null;
+			System.out.println("data :"+data);
+			try{
+			org.json.JSONObject parse = new org.json.JSONObject(data);
+			lessonCode = parse.getString("lessonCode");
+			classNo = parse.getString("classNo");
+			}catch(Exception e){}
+			LessonVO vo = lessonImpl.selectOneLesson(lessonCode, classNo);
+			return lessonImpl.getNotCheckList(vo);
+		}
+		
+		
+	
 	// 강의실 사람들 출력 AJAX
-	@RequestMapping(value = "/getCheckListAJAX", method = RequestMethod.GET,  produces="application/json")
+	@RequestMapping(value = "/getCheckListAJAX", method = RequestMethod.POST,  produces="application/json")
 	public @ResponseBody JSONArray getCheckList(@RequestBody String data  ) {
 		String placeNo = null ;
 		System.out.println("data :"+data);
@@ -86,6 +102,19 @@ public class LessonController {
 			
 		}
 			json.put("result",result);
+		return json;
+	}
+	
+	@RequestMapping(value = "/lessonStateAJAX", method = RequestMethod.POST,  produces="application/json")
+	public @ResponseBody JSONObject lessonState(@RequestBody String data) {
+		String placeNo = null ;
+		System.out.println("data :"+data);
+		try{
+		org.json.JSONObject parse = new org.json.JSONObject(data);
+		placeNo = parse.getString("placeNo");
+		}catch(Exception e){}
+		
+		JSONObject json = lessonImpl.lessonState(placeNo);
 		return json;
 	}
 	

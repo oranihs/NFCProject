@@ -1,128 +1,307 @@
 <!DOCTYPE html>
-<html >
-  <head>
-    <meta charset="UTF-8">
-    <title>Flat University Timetable</title>
-    
-    
-    
-    
-        <link rel="stylesheet" href="resources/assets/css/style.css">
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Kumoh</title>
+<link rel="stylesheet" href="resources/assets/css/style.css">
+<link rel="stylesheet" href="resources/assets/css/homeMain.css" />
+<noscript>
+	<link rel="stylesheet" href="resources/assets/css/noscript.css" />
+</noscript>
+</head>
 
-    
-    
-    
-  </head>
+<body>
 
-  <body>
+	<!-- / College Timetable -->
+	<div id="wrapper" class="homeClass" class='tab'>
+		<section id="#main">
 
-    <!-- / College Timetable -->
-<div class='tab'>
-  <table border='0' cellpadding='0' cellspacing='0'>
-    <tr class='days'>
-      <th></th>
-      <th>Monday</th>
-      <th>Tuesday</th>
-      <th>Wednesday</th>
-      <th>Thursday</th>
-      <th>Friday</th>
-    </tr>
-    <tr>
-      <td class='time'>9.00</td>
-      <td class='cs335 blue' data-tooltip='Software Engineering &amp; Software Process'>CS335 [JH1]</td>
-      <td class='cs426 purple' data-tooltip='Computer Graphics'>CS426 [CS1]</td>
-      <td></td>
-      <td></td>
-      <td>-</td>
-    </tr>
-    <tr>
-      <td class='time'>10.00</td>
-      <td></td>
-      <td class='cs335 blue lab' data-tooltip='Software Engineering &amp; Software Process'>CS335 [Lab]</td>
-      <td class='md352 green' data-tooltip='Multimedia Production &amp; Management'>MD352 [Kairos]</td>
-      <td></td>
-      <td>-</td>
-    </tr>
-    <tr>
-      <td class='time'>11.00</td>
-      <td></td>
-      <td class='cs335 blue lab' data-tooltip='Software Engineering &amp; Software Process'>CS335 [Lab]</td>
-      <td class='md352 green' data-tooltip='Multimedia Production &amp; Management'>MD352 [Kairos]</td>
-      <td class='cs240 orange' data-tooltip='Operating Systems'>CS240 [CH]</td>
-      <td>-</td>
-    </tr>
-    <tr>
-      <td class='time'>12.00</td>
-      <td></td>
-      <td class='md303 navy' data-tooltip='Media &amp; Globalisation'>MD303 [CS2]</td>
-      <td class='md313 red' data-tooltip='Special Topic: Multiculturalism &amp; Nationalism'>MD313 [Iontas]</td>
-      <td></td>
-      <td>-</td>
-    </tr>
-    <tr>
-      <td class='time'>13.00</td>
-      <td></td>
-      <td></td>
-      <td></td>
-      <td></td>
-      <td>-</td>
-    </tr>
-    <tr>
-      <td class='time'>14.00</td>
-      <td></td>
-      <td></td>
-      <td class='cs426 purple' data-tooltip='Computer Graphics'>CS426 [CS2]</td>
-      <td class='cs240 orange' data-tooltip='Operating Systems'>CS240 [TH1]</td>
-      <td>-</td>
-    </tr>
-    <tr>
-      <td class='time'>15.00</td>
-      <td></td>
-      <td></td>
-      <td></td>
-      <td class='cs240 orange lab' data-tooltip='Operating Systems'>CS240 [Lab]</td>
-      <td>-</td>
-    </tr>
-    <tr>
-      <td class='time'>16.00</td>
-      <td></td>
-      <td></td>
-      <td></td>
-      <td class='cs240 orange lab' data-tooltip='Operating Systems'>CS240 [Lab]</td>
-      <td>-</td>
-    </tr>
-    <tr>
-      <td class='time'>17.00</td>
-      <td class='cs335 blue' data-tooltip='Software Engineering &amp; Software Process'>CS335 [TH1]</td>
-      <td></td>
-      <td></td>
-      <td></td>
-      <td>-</td>
-    </tr>
-  </table>
-</div>
-  </body>
-  
-  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0/jquery.min.js"  ></script>
-	<script type="text/javascript" src="resources/js/jquery.storage.js"  ></script>
-  <script>
-  	console.log($.sessionStorage("lessonCode"));
-	console.lpg($.sessionStorage("classNo"));
-	console.lpg($.sessionStorage("placeNo"));
+			<h1 id="placeTitle" style="text-align: center"></h1>
+			<table id="userTable" border='0' cellpadding='0' cellspacing='0'>
+				<tr class='days'>
+					<th></th>
+					<th>1</th>
+					<th>2</th>
+					<th>3</th>
+					<th>4</th>
+					<th>5</th>
+					<th>6</th>
+					<th>7</th>
+					<th>8</th>
+				</tr>
+				<!--     <tr> -->
+				<!--       <td class='time'>9.00</td> -->
+				<!--       <td class='cs335 blue' data-tooltip='Software Engineering &amp; Software Process'>CS335 [JH1]</td> -->
+				<!--       <td class='cs426 purple' data-tooltip='Computer Graphics'>CS426 [CS1]</td> -->
+				<!--       <td></td> -->
+				<!--       <td></td> -->
+				<!--       <td>-</td> -->
+				<!--     </tr> -->
+				<tr>
+					<td class='time '>1</td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+				</tr>
+				<tr>
+					<td class='time'>2</td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+				</tr>
+				<tr>
+					<td class='time'>3</td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+				</tr>
+				<tr>
+					<td class='time'>4</td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+				</tr>
+				<tr>
+					<td class='time'>5</td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+				</tr>
+				<tr>
+					<td class='time'>6</td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+				</tr>
+				<tr>
+					<td class='time'>7</td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+				</tr>
+				<tr>
+					<td class='time'>8</td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+				</tr>
+				<!--     <tr> -->
+				<!--       <td class='time'>14.00</td> -->
+				<!--       <td></td> -->
+				<!--       <td></td> -->
+				<!--       <td class='cs426 purple' data-tooltip='Computer Graphics'>CS426 [CS2]</td> -->
+				<!--       <td class='cs240 orange' data-tooltip='Operating Systems'>CS240 [TH1]</td> -->
+				<!--       <td>-</td> -->
+				<!--     </tr> -->
+				<!--     <tr> -->
+				<!--       <td class='time'>15.00</td> -->
+				<!--       <td></td> -->
+				<!--       <td></td> -->
+				<!--       <td></td> -->
+				<!--       <td class='cs240 orange lab' data-tooltip='Operating Systems'>CS240 [Lab]</td> -->
+				<!--       <td>-</td> -->
+				<!--     </tr> -->
+				<!--     <tr> -->
+				<!--       <td class='time'>16.00</td> -->
+				<!--       <td></td> -->
+				<!--       <td></td> -->
+				<!--       <td></td> -->
+				<!--       <td class='cs240 orange lab' data-tooltip='Operating Systems'>CS240 [Lab]</td> -->
+				<!--       <td>-</td> -->
+				<!--     </tr> -->
+				<!--     <tr> -->
+				<!--       <td class='time'>17.00</td> -->
+				<!--       <td class='cs335 blue' data-tooltip='Software Engineering &amp; Software Process'>CS335 [TH1]</td> -->
+				<!--       <td></td> -->
+				<!--       <td></td> -->
+				<!--       <td></td> -->
+				<!--       <td>-</td> -->
+				<!--     </tr> -->
+			</table>
+			<br />
+			<footer>
+				<div class="field">
+					<div class="select-wrapper">
+						<select name="department" id="department">
+							<option >미 출석 학생</option>
+						</select>
+					</div>
+				</div>
+			</footer>
+		</section>
+		<footer>
+			<input id ="refreshBtn" type="button" class ="button" style="background: #efefef" value="Refresh"/>
+			<input id ="startendBtn" type="button" class ="button" style="background: #efefef" value="Start"/>
+		</footer>
+		
+		<div id="dialog" title="">
+  			<p>수업을 종료 합니다.</p>
+		</div>
+	</div>
+</body>
+
+<script type="text/javascript"
+	src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0/jquery.min.js"></script>
+<link rel="stylesheet" href="//code.jquery.com/ui/1.11.0/themes/smoothness/jquery-ui.css">
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+<script type="text/javascript" src="resources/js/jquery.storage.js"></script>
+<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1/jquery-ui.min.js"></script>
+<script>
+	console.log($.sessionStorage("lessonCode"));
+	console.log($.sessionStorage("classNo"));
+	console.log($.sessionStorage("placeNo"));
+	$("#placeTitle").text($.sessionStorage("placeNo") + " 현재 인원 정보");
+	var getCheckList = function() {
+
+		$.ajax({
+			type : "POST",
+			url : "getCheckListAJAX",
+			data : JSON.stringify({
+				placeNo : $.sessionStorage("placeNo")
+			}),
+			crossDomain : true,
+			success : function(data) {
+				$.each(data,
+						function(index, obj) {
+							console.log(obj.seatX);
+							console.log(obj.seatY);
+							var color = "orange";
+							if (obj.status == 2) {
+								color = "purple";
+							}
+
+							$(
+									"#userTable>tbody>tr:nth-child("
+											+ (obj.seatX + 1)
+											+ ")>td:nth-child("
+											+ (obj.seatY + 1) + ")").addClass(
+									color).addClass("cs426").text(obj.name);
+						});
+
+			},
+			dataType : "json",
+			contentType : "application/json"
+		});
+	}
+	
+	var getNotCheckList = function() {
+
+		$.ajax({
+			type : "POST",
+			url : "getNotCheckListAJAX",
+			data : JSON.stringify({
+				lessonCode : $.sessionStorage("lessonCode"),
+				classNo : $.sessionStorage("classNo")
+			}),
+			crossDomain : true,
+			success : function(data) {
+				$.each(data,
+						function(index, obj) {
+						$("#department").append($("<option>").text(obj.name));
+					});
+			},
+			dataType : "json",
+			contentType : "application/json"
+		});
+	}
+	
+	var getLessonState = function(){
+		$.ajax({
+			type : "POST",
+			url : "lessonStateAJAX",
+			data : JSON.stringify({
+				placeNo : $.sessionStorage("placeNo")
+			}),
+			crossDomain : true,
+			success : function(data) {
+				console.log(data.result);
+				if(data.result == 1){
+					$("#startendBtn").val("End");
+				}else{
+					$("#startendBtn").val("Start");
+				}
+			},
+			dataType : "json",
+			contentType : "application/json"
+		});
+	};
+	
+	$("#refreshBtn").click(function(){
+		
+	});
+	
+	$(function() {$('#dialog').dialog({
+		autoOpen: false,
+		resizable: false,
+		buttons: [
+			{
+				text: "OK",
+				click: function() {
+					console.log("You pressed OK!");
+					$(this).dialog("close");
+				}
+			},
+			{
+				text: "Cancel",
+				click: function() {
+					console.log("You pressed Cancel!");
+					$(this).dialog("close");
+				}
+			}
+		]
+	});});
+	$("#startendBtn").click(function(){
+		$('#dialog').dialog('open');
+
+		if($("#startendBtn").val == "End"){
+			
+		}
+	});
+	
+	getLessonState();
+	getCheckList();
+	getNotCheckList();
 	
 	
-	$.ajax({
-		  type: "POST",
-		  url: "getCheckListAJAX",
-		  data: JSON.stringify({
-			  placeNo : $.sessionStorage("placeNo")
-		  }),
-		  crossDomain: true,
-		  success: function(data){
-			console.log(data)			  
-		  },
-		  dataType:"json",
-		  contentType: "application/json"}
-		);
-  </script>
+</script>
 </html>

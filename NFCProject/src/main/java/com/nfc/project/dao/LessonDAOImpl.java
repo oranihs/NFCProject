@@ -11,6 +11,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.springframework.jdbc.core.JdbcTemplate;
 
+import com.nfc.project.GetCurrentDate;
 import com.nfc.project.vo.LessonVO;
 import com.nfc.project.vo.UserVO;
 
@@ -151,6 +152,18 @@ public class LessonDAOImpl {
 		return false;
 	}
 	
+	// 강의실 출석 가능 여부 상태
+	public JSONObject lessonState(String placeNo ){
+		
+		String sql = "select able from place where placeNo=?";
+		List<Map<String,Object>> result =  template.queryForList(sql,new Object[]{placeNo});
+
+		JSONObject json = null;
+		json = new JSONObject();
+		json.put("result", (Integer)result.get(0).get("able"));
+		return json;
+	}
+	
 	
 	
 	
@@ -162,17 +175,12 @@ public class LessonDAOImpl {
 		String classtime[] = {"1","2","3","4","5","6","7","8","9","A","B","C","D"};
 		int result = -1;
 		String sql = "select count(*) from lessonCheckInfo where id=? and lessonDate = ? and lessonCode = ? and classNo=?" ;
-		String timeStamp = new SimpleDateFormat("yyyy-MM-dd,HH:mm").format(Calendar.getInstance().getTime());
+		String timeStamp = GetCurrentDate.getDate();
 		int insertStatus =0;
 		
 		
-		int day = Calendar.getInstance().get(Calendar.DAY_OF_WEEK);
+		int day = GetCurrentDate.getDayOfWeek();
 
-		//timeStamp , day 테스트용 날짜 임의 설정
-		//day = 1 일 , 2 월 , 3 화
-		timeStamp = "2016-06-06,19:05";
-		day = 2;
-	
 		
 		
 		if(template.queryForInt(sql, new Object[]{id,timeStamp.split(",")[0],vo.getLessonCode(),vo.getClassNo()}) != 0){
@@ -224,10 +232,7 @@ public class LessonDAOImpl {
 	// 해당 과목 출석체크 하지 않은 사람 출력
 	public JSONArray getNotCheckList(LessonVO vo ){
 		JSONArray array  = new JSONArray();
-		String timeStamp = new SimpleDateFormat("yyyy-MM-dd,HH:mm").format(Calendar.getInstance().getTime());
-
-		//timeStamp , day 테스트용 날짜 임의 설정
-		timeStamp = "2016-06-06,19:05";
+		String timeStamp = GetCurrentDate.getDate();
 		
 		
 		String sql = "select u.id,u.name from lessonUser as lu natural join user u "
@@ -248,17 +253,18 @@ public class LessonDAOImpl {
 	// 해당 과목 출석중인  사람 출력
 		public JSONArray getCheckList(String placeNo){
 			JSONArray array  = new JSONArray();
-
+			String currentDate = GetCurrentDate.getDate().split(",")[0];
+			String sql = "select u.name,l.seatX, l.seatY , li.status from lessoningUser as l natural join user  as u "
+					+ "natural join lessonCheckInfo as li where placeNo = ? and li.lessonDate = ?";
 			
-			String sql = "select u.name,l.seatX, l.seatY from lessoningUser as l natural join user as u where placeNo = ?";
-			
-			List<Map<String, Object>> resultList = template.queryForList(sql,new Object[]{placeNo});
+			List<Map<String, Object>> resultList = template.queryForList(sql,new Object[]{placeNo,currentDate});
 			JSONObject json;
 			for (int i = 0; i < resultList.size(); i++) {
 				 json = new JSONObject();
 				json.put("name", (String)resultList.get(i).get("name"));
-				json.put("seatX", (String)resultList.get(i).get("seatX"));
-				json.put("seatY", (String)resultList.get(i).get("seatY"));
+				json.put("seatX", (Integer)resultList.get(i).get("seatX"));
+				json.put("seatY", (Integer)resultList.get(i).get("seatY"));
+				json.put("status", (Integer)resultList.get(i).get("status"));
 				array.add(json);
 			}
 			return array;
