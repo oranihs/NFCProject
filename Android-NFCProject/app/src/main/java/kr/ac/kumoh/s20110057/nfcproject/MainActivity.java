@@ -15,5 +15,15 @@ public class MainActivity extends AppCompatActivity {
     public void onLoginBtn(View view){
         Intent intent=new Intent(this, LoginActivity.class);
         startActivity(intent);
+        finish();
+    }
+    public void onExitBtn(View view){
+        programShutdown();
+    }
+    private void programShutdown() {
+        moveTaskToBack(true);
+        finish();
+        android.os.Process.killProcess(android.os.Process.myPid());
+        System.exit(0);
     }
 }

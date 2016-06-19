@@ -3,8 +3,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context=".MainActivity">
+    android:padding="50dp"
+    tools:context=".MainActivity"
+    android:orientation="vertical">
 
     <Button
         android:id="@+id/login_btn"
@@ -12,11 +13,12 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:text="@string/login_bt"
-        android:onClick="onLoginBtn"/>
+        android:onClick="onLoginBtn" />
     <Button
         android:id="@+id/exit_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="@string/exit_bt"/>
+        android:layout_gravity="center_horizontal"
+        android:text="@string/exit_bt"
+        android:onClick="onExitBtn"/>
 </LinearLayout>
