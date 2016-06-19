@@ -20,7 +20,7 @@ public class UserDAOImpl implements UserDAO {
 		this.template = template;
 	}
 
-	
+
 
 	@Override
 	public boolean haveUser(String id){
@@ -42,6 +42,7 @@ public class UserDAOImpl implements UserDAO {
 	@Override
 	public 	String createPW(String password){
 		return SCryptUtil.scrypt(password, 16, 16, 16);
+		
 	}
 
 	@Override
@@ -66,48 +67,53 @@ public class UserDAOImpl implements UserDAO {
 	public boolean pwCheck(String id , String pw){
 		String sql = "select user.pw from user where id=?";
 		String result = template.queryForObject(sql, new Object[]{id},String.class);
+		try{
+			boolean check = SCryptUtil.check(pw, result);
 
-		boolean check = SCryptUtil.check(pw, result);
-
-		if(check){
-			System.err.println("PASSWORD CHECK OK");
-			return true;
-		}else{
-			System.err.println("PASSWORD CHECK FAIL");
+			if(check){
+				System.err.println("PASSWORD CHECK OK");
+				return true;
+			}else{
+				System.err.println("PASSWORD CHECK FAIL");
+				return false;
+			}
+		}catch(IllegalArgumentException e){
 			return false;
 		}
 	}
-	
-	
-	int findLessonList(ArrayList<LessonVO> list , String lessonCode){
+
+
+	int findLessonList(ArrayList<LessonVO> list , String lessonCode,String classNo){
 		for (int i = 0; i < list.size(); i++) {
-			if(list.get(i).getLessonCode().equals(lessonCode)){
+			if(list.get(i).getLessonCode().equals(lessonCode) && list.get(i).getClassNo().equals(classNo)){
+				
 				return i;
 			}
 		}
-		
+
 		return -1;
 	}
-	
-	
-	
-	
+
+
+
+
 	public ArrayList<LessonVO> selectUserLessonList(String id){
-		
+
 		ArrayList<LessonVO> lessonList =null;
-		
+
 		String sql = "select  u.lessonCode , u.ClassNo , l.lessonName, l.teacher, t.lessonTime , p.placeNo"
-					+ " from lessonuser as u natural join lesson as l  natural join lessonplacetime as t natural join place p"
-					+ " where id = ?";
+				+ " from lessonuser as u natural join lesson as l  natural join lessonplacetime as t natural join place p"
+				+ " where id = ?";
 		List<Map<String, Object>> resultList =  template.queryForList(sql, new Object[]{id});
-		
+
 		LessonVO vo;
 		String before ="";
 		lessonList = new ArrayList<LessonVO>();
 		for(int i = 0 ; i < resultList.size() ; i++){
 			String lessonCode = (String) resultList.get(i).get("LessonCode");
-			
-			if(findLessonList(lessonList, lessonCode) == -1){
+			String classNo = (String) resultList.get(i).get("classNo");
+
+			if(findLessonList(lessonList, lessonCode,classNo) == -1){
 				vo = new LessonVO();
 				vo.setClassNo((String) resultList.get(i).get("classNo"));
 				vo.setLessonCode((String) resultList.get(i).get("LessonCode"));
@@ -120,15 +126,15 @@ public class UserDAOImpl implements UserDAO {
 				ArrayList<String> lessonPlaceList = new ArrayList<String>();
 				lessonPlaceList.add((String) resultList.get(i).get("placeNo"));
 				vo.setPlaceNo(lessonPlaceList);
-				
+
 				lessonList.add(vo);
 			}else{
-				int getNo = findLessonList(lessonList, lessonCode);
+				int getNo = findLessonList(lessonList, lessonCode,classNo);
 				lessonList.get(getNo).getLessonTime().add((String) resultList.get(i).get("lessonTime"));
 				lessonList.get(getNo).getPlaceNo().add((String) resultList.get(i).get("placeNo"));
 			}
 		}
-		
+
 		return lessonList;
 	}
 
@@ -139,7 +145,7 @@ public class UserDAOImpl implements UserDAO {
 		String sql = "select lessonDate , status from lessoncheckinfo where id= ? and lessonCode=? and classNo=?";
 		JSONArray array = new JSONArray();
 		List<Map<String,Object>> list = template.queryForList(sql, new Object[]{id,lessonCode,classNo});
-		
+
 		JSONObject json = null;
 		for (int i = 0; i < list.size(); i++) {
 			json = new JSONObject();
@@ -150,4 +156,24 @@ public class UserDAOImpl implements UserDAO {
 		return array;
 	}
 
+	public JSONObject selectUser(String id) {
+		String sql = "select id,name,type from user where id= ? ";
+		JSONArray array = new JSONArray();
+		List<Map<String,Object>> result =  template.queryForList(sql,new Object[]{id});
+
+		System.out.println("result : "+result.get(0).get("name"));
+		System.out.println("result : "+result.get(0).get("type"));
+		JSONObject json = null;
+		json = new JSONObject();
+		json.put("name", (String)result.get(0).get("name"));
+		json.put("type", (String)result.get(0).get("type"));
+		array.add(json);
+		return json;
+	}
+
+	
+//	public static void main(String[] args) {
+//		UserDAOImpl obj = new UserDAOImpl();
+//		System.out.println(obj.createPW("asdf"));
+//	}
 }

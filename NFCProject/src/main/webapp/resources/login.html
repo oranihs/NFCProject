@@ -1,0 +1,267 @@
+<!DOCTYPE HTML>
+<!--
+	Identity by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+<head>
+<title>Identity by HTML5 UP</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<!--[if lte IE 8]><script src="assets/js/html5shiv.js"></script><![endif]-->
+<link rel="stylesheet" href="resources/assets/css/main.css" />
+<!--[if lte IE 9]><link rel="stylesheet" href="assets/css/ie9.css" /><![endif]-->
+<!--[if lte IE 8]><link rel="stylesheet" href="assets/css/ie8.css" /><![endif]-->
+<noscript>
+	<link rel="stylesheet" href="resources/assets/css/noscript.css" />
+</noscript>
+</head>
+<body class="is-loading">
+
+	<!-- Wrapper -->
+	<div id="wrapper">
+
+		<!-- Main -->
+		<section id="main">
+			<header>
+				<span class="avatar"><img src="resources/images/avatar.jpg"
+					alt="" /></span>
+<!-- 				<h1>KUMOH LOGIN</h1> -->
+				<p>Only Use to Teacher</p>
+			</header>
+			<div id="loginSection">
+			<h3 id="resultMsg">Need to Login</h3>
+			<form method="post" action="#">
+				<div class="field">
+					<input type="text" name="id" id="id" placeholder="ID" />
+				</div>
+				<div class="field">
+					<input type="password" name="pw" id="pw" placeholder="PASSWORD" />
+				</div>
+				<ul class="actions">
+					<li><a href="#" id="loginBtn" class="button">LOGIN</a></li>
+					<li><a href="#" id="signupBtn" class="button">SIGNUP</a></li>
+				</ul>
+			</form>
+			</div>
+			
+			<div id="listSection">
+				<ul class="actions" id="lessonList">
+					
+				</ul>
+			</div>
+			<!-- 
+							<div class="field">
+								<div class="select-wrapper">
+									<select name="department" id="department">
+										<option value="">Department</option>
+										<option value="sales">Sales</option>
+										<option value="tech">Tech Support</option>
+										<option value="null">/dev/null</option>
+									</select>
+								</div>
+							</div>
+							<div class="field">
+								<textarea name="message" id="message" placeholder="Message" rows="4"></textarea>
+							</div>
+							<div class="field">
+								<input type="checkbox" id="human" name="human" /><label for="human">I'm a human</label>
+							</div>
+							<div class="field">
+								<label>But are you a robot?</label>
+								<input type="radio" id="robot_yes" name="robot" /><label for="robot_yes">Yes</label>
+								<input type="radio" id="robot_no" name="robot" /><label for="robot_no">No</label>
+							</div>
+							<ul class="actions">
+								<li><a href="#" class="button">Get Started</a></li>
+							</ul>
+							 -->
+
+			<hr />
+			<!-- 						<footer> -->
+			<!-- 							<ul class="icons"> -->
+			<!-- 								<li><a href="#" class="fa-twitter">Twitter</a></li> -->
+			<!-- 								<li><a href="#" class="fa-instagram">Instagram</a></li> -->
+			<!-- 								<li><a href="#" class="fa-facebook">Facebook</a></li> -->
+			<!-- 							</ul> -->
+			<!-- 						</footer> -->
+		</section>
+
+		<!-- Footer -->
+		<footer id="footer">
+			<ul class="copyright">
+				<li>&copy; Jane Doe</li>
+				<li>Design: HTML5 UP</li>
+			</ul>
+		</footer>
+
+	</div>
+
+	<!-- Scripts -->
+	<!--[if lte IE 8]><script src="assets/js/respond.min.js"></script><![endif]-->
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0/jquery.min.js"  ></script>
+	<script type="text/javascript" src="resources/js/jquery.storage.js"  ></script>
+	<script>
+				var lessonData = [];
+				if ('addEventListener' in window) {
+					window.addEventListener('load', function() { document.body.className = document.body.className.replace(/\bis-loading\b/, ''); });
+					document.body.className += (navigator.userAgent.match(/(MSIE|rv:11\.0)/) ? ' is-ie' : '');
+				}
+				
+				var idpwCheck = function(){
+					if($("#id").val() == "" | $("#pw").val() == ""){
+						$("#resultMsg").text("ID / PW 모두 입력하시오.");
+						return false;
+					}
+					return true;
+				}
+				
+				var getList = function(){
+					console.log($("#id").val());
+					$.ajax({
+						  type: "POST",
+						  url: "getLessonListAjax",
+						  data: JSON.stringify({
+							  id : $("#id").val()
+						  }),
+						  crossDomain: true,
+						  success: function(data){
+							  lessonData = [];
+							  var current = new Date();
+							  var dayOfWeek = ["일","월","화","수","목","금","토"];
+							  var classTime = ["1","2","3","4","5","6","7","8","9","A","B","C","D"];
+							  var currentDayOfWeek = dayOfWeek[current.getDay()+1];
+							  var currentClassTime = classTime[current.getHours()-9 +4 ];
+							  
+							  console.log(currentDayOfWeek);
+							  console.log(currentClassTime);
+							  $.each(data,function(index,obj){
+								  var enterCheck = 0;
+								  lessonData.push()
+								  var placeNo = "null";
+								  $.each(obj.lessonTime,function(i,time){
+									  console.log("result:"+time+" & ");
+									  if(time.indexOf(currentDayOfWeek) != -1 && time.indexOf(currentClassTime) != -1){
+									  	enterCheck = "ABLE";
+									  	placeNo = obj.placeNo[i];
+									  	return false;
+									  }else{
+									  	console.log("disable....");
+										  enterCheck = "DISABLE";
+									  }
+									  
+								  })
+								  
+								  
+								  var li = $('<li>');
+								  li.addClass("liClass");
+								  $(".liClass").css("display","block");
+								  var p = $('<p>');
+								  p.addClass("classData");
+								  p.addClass(obj.lessonCode);
+								  p.addClass(obj.classNo);
+								  p.addClass(placeNo);
+								 p.text(obj.lessonName +"\t"+ obj.lessonCode+"-"+ obj.classNo); 
+								 li.append(p);
+								 
+								 var button = $('<input>');
+								 button.addClass("button");
+								 button.addClass(enterCheck);
+								 button.attr("type","button");
+								 button.attr("value",enterCheck);
+								 li.append(button);
+								console.log(li);	  
+								
+							  	$("#lessonList").append(li);
+						
+							  });
+							  
+							  }
+					,dataType:"json",
+					  contentType: "application/json"
+					});
+					
+					$("#loginSection").css("display","none");
+					$("#loginSection").css("visibility","hidden");
+					
+				}
+				
+				$("#signupBtn").click(function(){
+					if(!idpwCheck()){
+						return;
+					}
+					$.ajax({
+						  type: "POST",
+						  url: "SignupAjax",
+						  data: JSON.stringify({
+							  id : $("#id").val(),
+							  pw : $("#pw").val()
+						  }),
+						  crossDomain: true,
+						  success: function(data){
+							  console.log(data);
+							  
+							  if(data.result == "false"){
+								  $("#resultMsg").text(data.error);
+							  }else if(data.result == "true"){
+								  $("#resultMsg").text("회원 가입 되었습니다.");
+							  }
+						  },
+						  dataType:"json",
+						  contentType: "application/json"}
+						);
+					
+				});
+				
+				$("#loginBtn").click(function(){
+					if(!idpwCheck()){
+						return;
+					}
+					
+					$.ajax({
+						  type: "POST",
+						  url: "LoginAjax",
+						  data: JSON.stringify({
+							  id : $("#id").val(),
+							  pw : $("#pw").val()
+						  }),
+						  crossDomain: true,
+						  success: function(data){
+							  if(data.result == "needSignUp"){
+								  $("#resultMsg").text("회원가입이 필요 합니다.");
+							  }else if(data.result == "false"){
+								  $("#resultMsg").text("비밀 번호가 틀렸습니다.");
+							  }else if(data.result == "true"){
+								  if(data.type != "교수"){
+									  $("#resultMsg").text("학생은 접속할 수 없습니다.");
+								  }else{
+									  getList();
+								  }
+							  }
+							  
+						  },
+						  dataType:"json",
+						  contentType: "application/json"}
+						);
+				});
+				
+				$(document).on('click', '.ABLE' , function(data) {
+					var form = $('<form></form>');
+
+				    form.attr("method", "GET");
+				    form.attr("action", "classHome");
+				    var select = $(this).parent().children(".classData").attr("class");
+				    var list = select.split(" ");
+				    console.log(list[1]);
+				    console.log(list[2]);
+				    console.log(list[3]);
+					$.sessionStorage("lessonCode",list[1]);
+					$.sessionStorage("classNo",list[2]);
+					$.sessionStorage("placeNo",list[3]);
+				    form.submit();
+				});
+	</script>
+
+</body>
+</html>

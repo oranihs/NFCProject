@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -53,6 +54,18 @@ public class LessonController {
 		
 		LessonVO vo = lessonImpl.selectOneLesson(lessonCode, classNo);
 		return lessonImpl.getNotCheckList(vo);
+	}
+	
+	// 강의실 사람들 출력 AJAX
+	@RequestMapping(value = "/getCheckListAJAX", method = RequestMethod.GET,  produces="application/json")
+	public @ResponseBody JSONArray getCheckList(@RequestBody String data  ) {
+		String placeNo = null ;
+		System.out.println("data :"+data);
+		try{
+		org.json.JSONObject parse = new org.json.JSONObject(data);
+		placeNo = parse.getString("placeNo");
+		}catch(Exception e){}
+		return lessonImpl.getCheckList(placeNo);
 	}
 	
 	

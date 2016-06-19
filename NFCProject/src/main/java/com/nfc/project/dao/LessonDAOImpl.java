@@ -103,9 +103,6 @@ public class LessonDAOImpl {
 	
 	
 	public JSONObject checkLessoningUser(String id,LessonVO vo, int seatX,int seatY,String placeNo){
-		
-		
-		
 		String sql  = "select count(*) from LessoningUser where id=? and placeNo = ? and seatx = ? and seaty = ?";
 		int result = template.queryForInt(sql, new Object[]{id,placeNo,seatX,seatY});
 	
@@ -247,4 +244,23 @@ public class LessonDAOImpl {
 		
 		return array;
 	}
+	
+	// 해당 과목 출석중인  사람 출력
+		public JSONArray getCheckList(String placeNo){
+			JSONArray array  = new JSONArray();
+
+			
+			String sql = "select u.name,l.seatX, l.seatY from lessoningUser as l natural join user as u where placeNo = ?";
+			
+			List<Map<String, Object>> resultList = template.queryForList(sql,new Object[]{placeNo});
+			JSONObject json;
+			for (int i = 0; i < resultList.size(); i++) {
+				 json = new JSONObject();
+				json.put("name", (String)resultList.get(i).get("name"));
+				json.put("seatX", (String)resultList.get(i).get("seatX"));
+				json.put("seatY", (String)resultList.get(i).get("seatY"));
+				array.add(json);
+			}
+			return array;
+		}
 }

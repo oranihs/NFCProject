@@ -25,6 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -79,7 +80,64 @@ public class UserController {
 		return json;
 	}
 	
+	
+	//로그인 AJAX
+		@RequestMapping(value = "/LoginAjax", method = RequestMethod.POST,  produces="application/json")
+		public @ResponseBody JSONObject LoginAjax(@RequestBody String data ){
+			String id = null , pw = null;
+			
+			try{
+			org.json.JSONObject parse = new org.json.JSONObject(data);
+			id = parse.getString("id");
+			pw = parse.getString("pw");
+			System.out.println("id :"+id + "  pw : "+ pw);
+			}catch(Exception e){}
+			
+			JSONObject json = new JSONObject();
+				boolean result = userImpl.haveUser(id);
+				
+				if(result){
+					
+					result = userImpl.pwCheck(id, pw);
+					
+					if(result){
+						System.out.println("true");
+						json.put("result", "true");
+						JSONObject tmp = userImpl.selectUser(id);
+						json.put("type", tmp.get("type"));
+					}else{
+						json.put("result", "false");
+					}
+				}else{
+					json.put("result", "needSignUp");
+				}
+			return json;
+		}
+		
+		
+	
 	// 나의 수업 리스트 출력
+	@RequestMapping(value = "/getLessonListAjax", method = RequestMethod.POST,  produces="application/json")
+	public @ResponseBody JSONArray getLessonListAjax(@RequestBody String data ){
+			String id = null ;
+			System.out.println("data :"+data);
+			try{
+			org.json.JSONObject parse = new org.json.JSONObject(data);
+			id = parse.getString("id");
+			}catch(Exception e){}
+			System.out.println("id : "+id);
+			ArrayList<LessonVO> resultList =  userImpl.selectUserLessonList(id);
+			
+			JSONArray resultArray = new JSONArray();
+			
+			for (int i = 0; i < resultList.size(); i++) {
+				System.out.println(resultList.get(i).toString());
+				resultArray.add(new LessonVO().createJSON(resultList.get(i)));
+			}
+			
+		return resultArray;
+	}
+	
 	@RequestMapping(value = "/getLessonList", method = RequestMethod.GET,  produces="application/json;charset=UTF-8")
 	public @ResponseBody JSONArray getLessonList(@RequestParam("id") String id ){
 		
@@ -196,6 +254,130 @@ public class UserController {
 				}else {
 					System.out.println("Kumoh login false");
 					
+				}
+				
+				
+			} catch (UnsupportedEncodingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (ClientProtocolException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+	} catch (JSONException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+		
+		json.put("result", "true");
+		return json;
+	}
+	
+	
+	
+	@RequestMapping(value = "/SignupAjax", method = RequestMethod.POST,  produces="application/json")
+	public @ResponseBody JSONObject SinupAjax(@RequestBody String data ){
+		String id = null , pw = null;
+		
+		try{
+		org.json.JSONObject parse = new org.json.JSONObject(data);
+		id = parse.getString("id");
+		pw = parse.getString("pw");
+		System.out.println("id :"+id + "  pw : "+ pw);
+		}catch(Exception e){}
+		
+		JSONObject json = new JSONObject();
+			boolean result = userImpl.haveUser(id);
+			
+			if(result){
+				json.put("result", "false");
+				json.put("error", "already user exist");
+				return json;
+			}
+			
+			
+			// Komoh Login;
+			HttpClient httpClient = new DefaultHttpClient();
+			HttpContext httpContext = new BasicHttpContext();
+	        HttpResponse httpResponse;
+	        HttpPost httpPost = new HttpPost("http://m.kumoh.ac.kr/login?currentUri="); 
+	        httpPost.addHeader("User-Agent", "Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36");
+			httpPost.addHeader("Content-Type", "application/x-www-form-urlencoded");
+			
+			List<NameValuePair> parameters = new ArrayList<NameValuePair>(); 
+			parameters.add(new BasicNameValuePair("j_username", id)); 
+			parameters.add(new BasicNameValuePair("j_password", pw));
+			try {
+				httpPost.setEntity(new UrlEncodedFormEntity(parameters, HTTP.UTF_8));
+				httpResponse = httpClient.execute(httpPost, httpContext);
+				
+//				System.out.println(httpResponse.getStatusLine().toString());
+				
+				if(httpResponse.getStatusLine().toString().equals("HTTP/1.1 302 Found")){
+					
+					System.out.println("Kumoh login ok");
+					System.out.println(EntityUtils.toString(httpResponse.getEntity()));
+					
+					HttpGet get = new HttpGet("http://m.kumoh.ac.kr/ugradService/cgeRegEnq/basicInfo/getBasicInfo.json");
+					get.addHeader("User-Agent", "Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36");
+					get.addHeader("Content-Type", "application/x-www-form-urlencoded");
+					httpResponse = httpClient.execute(get, httpContext)	;
+					String userData = EntityUtils.toString(httpResponse.getEntity());
+					org.json.JSONObject userObject = new org.json.JSONObject(userData);
+					
+					System.out.println(userData);
+					
+					get = new HttpGet("http://m.kumoh.ac.kr/ugradService/lectReqEnq/lectReqEnqList.json?viewPage=1&listCount=15");
+					get.addHeader("User-Agent", "Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36");
+					get.addHeader("Content-Type", "application/x-www-form-urlencoded");
+					httpResponse = httpClient.execute(get, httpContext); 
+		
+					String userLesson = EntityUtils.toString(httpResponse.getEntity());
+					System.out.println(userLesson);
+					
+					
+					UserVO user = new UserVO();
+					user.setId(id);
+					user.setName(userObject.getString("name"));
+					user.setType(userObject.getString("cge_reg"));
+					user.setPw(pw);
+					
+					boolean insertResult = userImpl.insertUser(user);
+					if(!insertResult){
+						json.put("result", "false");
+						json.put("error", "userInsert fail");
+						return json;
+					}
+					
+					LessonVO lessonVO ;
+					
+					org.json.JSONArray lessonList = new org.json.JSONArray(userLesson);
+					ArrayList<LessonVO> insertLessonList = new ArrayList<LessonVO>();
+					for(int i = 0 ; i < lessonList.length() ; i++){
+						String lesson = lessonList.getJSONObject(i).getString("개설교과목코드");
+						String lessonData[] = lesson.split("-");
+						lessonVO = new LessonVO();
+						lessonVO.setLessonCode(lessonData[0]);
+						lessonVO.setClassNo(lessonData[1]);
+						insertLessonList.add(lessonVO);
+					}
+					
+					int lessonInsertResult = lessonImpl.insertUserLessonList(id, insertLessonList); 
+					
+					
+					if(lessonInsertResult != lessonList.length()){
+						json.put("result", "false");
+						json.put("error", "lessonInsert fail");
+						return json;
+					}
+					
+				}else {
+					System.out.println("Kumoh login false");
+					json.put("result", "false");
+					json.put("error", "Kumoh Login fail");
+					return json;
 				}
 				
 				
