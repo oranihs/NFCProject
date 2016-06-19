@@ -57,6 +57,7 @@ import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -69,9 +70,11 @@ public class CheckActivity extends AppCompatActivity {
     public static final String LESSONTAG = "LessonTag";
     protected String id = null;
     protected String lessonName = null;
+    protected String LessonTime =null;
 
     protected JSONArray mResult = null;
     protected JSONObject checkResult = null;
+    protected JSONObject checkObject = null;
 
     protected ArrayList<LessonInfo> mArray = new ArrayList<LessonInfo>();
     protected ListView mList;
@@ -81,6 +84,10 @@ public class CheckActivity extends AppCompatActivity {
     private PendingIntent pendingIntent;
     private IntentFilter[] mFilters;
     private String[][] mTechLists;
+    private String dayOfWeek[] = {"" , "일","월","화","수","목","금","토"};
+    private String classtime[] = {"1","2","3","4","5","6","7","8","9","A","B","C","D"};
+    private int day;
+    private int hour;
 
     public static final int TYPE_TEXT = 1;
     public static final int TYPE_URI = 2;
@@ -103,6 +110,11 @@ public class CheckActivity extends AppCompatActivity {
         nfcIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
         pendingIntent = PendingIntent.getActivity(this, 0, nfcIntent, 0);
         IntentFilter ndef = new IntentFilter(NfcAdapter.ACTION_NDEF_DISCOVERED);
+
+        String timeStamp = new SimpleDateFormat("yyyy-MM-dd,HH:mm").format(Calendar.getInstance().getTime());
+        day = Calendar.getInstance().get(Calendar.DAY_OF_WEEK);
+        hour = Integer.parseInt(timeStamp.split(",")[1].split(":")[0]);
+
         try {
             ndef.addDataType("*/*");
             mFilters = new IntentFilter[]{ndef};
@@ -241,9 +253,22 @@ public class CheckActivity extends AppCompatActivity {
     }
 
     public void NFCTag(String placeNo, String seatX, String seatY) {
-        String url = "http://172.20.10.3:8080/project/checkLesson?id=" + id
-                + "&lessonCode=" + "&classNo=" + "&placeNo=" + placeNo + "&seatX=" + seatX + "&seatY=" + seatY;
-        
+
+
+        String url = null;
+        try {
+            if(checkObject.getString("placeNo").equals(placeNo)) {
+                url = "http://172.20.10.3:8080/project/checkLesson?id=" + id
+                        + "&lessonCode=" + checkObject.getString("lessonCode") + "&classNo=" + checkObject.getString("classNo") +
+                        "&placeNo=" + placeNo + "&seatX=" + seatX + "&seatY=" + seatY;
+            }
+            else{
+                Toast.makeText(CheckActivity.this,"해당 수업의 강의실이 아닙니다.", Toast.LENGTH_LONG).show();
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null,
                 new Response.Listener<JSONObject>() {
             @Override
@@ -412,8 +437,15 @@ public class CheckActivity extends AppCompatActivity {
                 String code = jsonChildNode.getString("lessonCode");
                 String classNo = jsonChildNode.getString("classNo");
                 String teacher = jsonChildNode.getString("teacher");
+                LessonTime = jsonChildNode.getString("lessonTime");
                 lessonName=name;
 
+                if(LessonTime.contains(dayOfWeek[day] + classtime[hour - 9].charAt(0))){
+                    checkObject = jsonChildNode;
+                }
+                if(LessonTime.contains(dayOfWeek[day] + classtime[hour - 8].charAt(0))){
+                    checkObject = jsonChildNode;
+                }
                 /*String gmt = jsonChildNode.getString("LessonDate");
                 Date local = new Date(Long.parseLong(gmt) * 1000);
                 String date = new SimpleDateFormat("yyyy-MM-dd,HH:mm", Locale.KOREA).format(local);
