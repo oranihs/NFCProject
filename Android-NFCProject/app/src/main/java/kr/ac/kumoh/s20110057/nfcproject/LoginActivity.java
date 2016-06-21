@@ -5,18 +5,12 @@ import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutCompat;
-import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.android.volley.AuthFailureError;
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.android.volley.toolbox.HttpClientStack;
-import com.android.volley.toolbox.JsonObjectRequest;
 
 import org.apache.http.client.HttpClient;
 import org.apache.http.protocol.HTTP;
@@ -33,8 +27,6 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.net.ssl.HttpsURLConnection;
 
@@ -44,7 +36,6 @@ public class LoginActivity extends AppCompatActivity {
 	EditText pwEt;
 	String id;
 	String pw;
-	JSONObject resObj = null;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -59,6 +50,7 @@ public class LoginActivity extends AppCompatActivity {
 		//requestHttpGet(idEt.getText().toString(), pwEt.getText().toString());
 		//Intent intent=new Intent(this, CheckActivity.class);
 		//startActivity(intent);
+
 		hu = new HttpUtil();
 		hu.execute();
 	}
@@ -70,8 +62,8 @@ public class LoginActivity extends AppCompatActivity {
 
 		}
 	}
-	public void requestHttpGet(final String id, final String pw){
-		String sURL="http://172.20.10.3:8080/project/";
+	public void requestHttpGet(String id, String pw){
+		String sURL="http://172.20.10.3:9999/project/";
 		StringBuffer sb = new StringBuffer(sURL);
 		sb.append("Login?id=" + id + "&pw=" + pw);
 
@@ -106,7 +98,7 @@ public class LoginActivity extends AppCompatActivity {
 				JSONObject responseJSON = null;
 				try {
 					responseJSON = new JSONObject(response);
-					final String result = (String) responseJSON.get("result");
+					String result = (String) responseJSON.get("result");
 					if(result.equals("true")){
 						//로그인 성공
 						Intent intent=new Intent(this, CheckActivity.class);
@@ -118,44 +110,9 @@ public class LoginActivity extends AppCompatActivity {
 						//로그인 실패
 						Toast.makeText(LoginActivity.this, "로그인 실패", Toast.LENGTH_LONG);
 					}
-					else if(result.equals("needSignUp")){
+					else if(result.equals("needsSignUp")){
 						//needSigniup
-						String signURL = "http://172.20.10.3:8080/project/Signup";
-						JsonObjectRequest jr = new JsonObjectRequest(Request.Method.POST, signURL , null,new Response.Listener() {
-							@Override
-							public void onResponse(Object response) {
-								Toast.makeText(LoginActivity.this,"등록",Toast.LENGTH_LONG).show();
-							}
-						}, new Response.ErrorListener() {
 
-							@Override
-							public void onErrorResponse(VolleyError volleyError) {
-
-							}
-
-						}) {
-
-							//String combined = finalUrlApiKey + ":" + finalUrlApiSecret;
-
-							// Base64 encode the string
-							//String base64Encoded = Base64.encodeToString(combined.getBytes(), Base64.NO_WRAP);
-
-							@Override
-							public Map getHeaders() throws AuthFailureError {
-								Map  params = new HashMap();
-								//params.put("Authorizationasic " + base64Encoded);
-								params.put("id", id);
-								params.put("pw", pw);
-
-								return params;
-							}
-						};
-						if(resObj.getString("result").equals("true")){
-							Toast.makeText(LoginActivity.this,"다시 로그인해주세요.",Toast.LENGTH_LONG).show();
-						}
-						else if(resObj.getString("result").equals("false")){
-							Toast.makeText(LoginActivity.this,"등록 실패",Toast.LENGTH_LONG).show();
-						}
 
 					}
 				} catch (JSONException e) {

@@ -4,6 +4,9 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.nfc.NdefMessage;
 import android.nfc.NdefRecord;
@@ -23,6 +26,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -69,12 +73,9 @@ public class CheckActivity extends AppCompatActivity {
 
     public static final String LESSONTAG = "LessonTag";
     protected String id = null;
-    protected String lessonName = null;
-    protected String LessonTime =null;
 
     protected JSONArray mResult = null;
     protected JSONObject checkResult = null;
-    protected JSONObject checkObject = null;
 
     protected ArrayList<LessonInfo> mArray = new ArrayList<LessonInfo>();
     protected ListView mList;
@@ -84,10 +85,16 @@ public class CheckActivity extends AppCompatActivity {
     private PendingIntent pendingIntent;
     private IntentFilter[] mFilters;
     private String[][] mTechLists;
-    private String dayOfWeek[] = {"" , "일","월","화","수","목","금","토"};
-    private String classtime[] = {"1","2","3","4","5","6","7","8","9","A","B","C","D"};
-    private int day;
-    private int hour;
+    private JSONObject nfcJson;
+    String dayOfWeek[] = {"" , "일","월","화","수","목","금","토"};
+    String classtime[] = {"1","2","3","4","5","6","7","8","9","A","B","C","D"};
+    String date="월B";
+    int hour;
+    int minutes;
+    int day;
+
+
+
 
     public static final int TYPE_TEXT = 1;
     public static final int TYPE_URI = 2;
@@ -106,15 +113,16 @@ public class CheckActivity extends AppCompatActivity {
         Intent intent = getIntent();
         id = intent.getStringExtra("id");
 
+        //현재 시간 구하기
+        /*day = Calendar.getInstance().get(Calendar.DAY_OF_WEEK);
+        hour = Integer.parseInt(date.split(",")[1].split(":")[0]);
+        minutes = Integer.parseInt(date.split(",")[1].split(":")[1]);
+        if(hour<9) hour=9;*/
+
         Intent nfcIntent = new Intent(this, getClass());
         nfcIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
         pendingIntent = PendingIntent.getActivity(this, 0, nfcIntent, 0);
         IntentFilter ndef = new IntentFilter(NfcAdapter.ACTION_NDEF_DISCOVERED);
-
-        String timeStamp = new SimpleDateFormat("yyyy-MM-dd,HH:mm").format(Calendar.getInstance().getTime());
-        day = Calendar.getInstance().get(Calendar.DAY_OF_WEEK);
-        hour = Integer.parseInt(timeStamp.split(",")[1].split(":")[0]);
-
         try {
             ndef.addDataType("*/*");
             mFilters = new IntentFilter[]{ndef};
@@ -253,23 +261,14 @@ public class CheckActivity extends AppCompatActivity {
     }
 
     public void NFCTag(String placeNo, String seatX, String seatY) {
+        BitmapDrawable dr = (BitmapDrawable)getResources().getDrawable(R.drawable.checkon);
+        ImageView img = (ImageView)findViewById(R.id.check_image);
+        img.setImageDrawable(dr);
 
+        String obj = "http://172.20.10.3:9999/project/checkLesson?id=" + id
+                + "&lessonCode=CD0033" + "&classNo=02" + "&placeNo=" + placeNo + "&seatX=" + seatX + "&seatY=" + seatY;
 
-        String url = null;
-        try {
-            if(checkObject.getString("placeNo").equals(placeNo)) {
-                url = "http://172.20.10.3:8080/project/checkLesson?id=" + id
-                        + "&lessonCode=" + checkObject.getString("lessonCode") + "&classNo=" + checkObject.getString("classNo") +
-                        "&placeNo=" + placeNo + "&seatX=" + seatX + "&seatY=" + seatY;
-            }
-            else{
-                Toast.makeText(CheckActivity.this,"해당 수업의 강의실이 아닙니다.", Toast.LENGTH_LONG).show();
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null,
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, obj, null,
                 new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
@@ -281,9 +280,11 @@ public class CheckActivity extends AppCompatActivity {
                 Toast.makeText(CheckActivity.this, "서버 에러", Toast.LENGTH_LONG);
             }
         });
-        try {
-            if(checkResult.getString("checkResult").equals("true")){
+        try {            if(checkResult.getString("checkResult").equals("true")){
                 Toast.makeText(CheckActivity.this,"출석 체크 성공", Toast.LENGTH_LONG).show();
+            }
+            else if(checkResult.getString("checkResult").equals("false")){
+                Toast.makeText(CheckActivity.this,checkResult.getString("error"),Toast.LENGTH_LONG);   // 출석 실패
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -397,7 +398,7 @@ public class CheckActivity extends AppCompatActivity {
                 public void onClick(View v) {
                     Intent lessonIntent = new Intent(CheckActivity.this,LessonActivity.class);
                     lessonIntent.putExtra("id",id);
-                    lessonIntent.putExtra("name",lessonName);
+                    lessonIntent.putExtra("name",viewHolder.txName.getText().toString());
                     lessonIntent.putExtra("lessonCode",viewHolder.txCode.getText().toString());
                     lessonIntent.putExtra("classNo",viewHolder.txClassNo.getText().toString());
                     startActivity(lessonIntent);
@@ -410,7 +411,7 @@ public class CheckActivity extends AppCompatActivity {
 
     //--------------------------------------------------------------
     protected void requestLesson() {
-        String url = "http://172.20.10.3:8080/project/getLessonList?id=" + id;
+        String url = "http://172.20.10.3:9999/project/getLessonList?id=" + id;
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(url, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
@@ -437,28 +438,24 @@ public class CheckActivity extends AppCompatActivity {
                 String code = jsonChildNode.getString("lessonCode");
                 String classNo = jsonChildNode.getString("classNo");
                 String teacher = jsonChildNode.getString("teacher");
-                LessonTime = jsonChildNode.getString("lessonTime");
-                lessonName=name;
 
-                if(LessonTime.contains(dayOfWeek[day] + classtime[hour - 9].charAt(0))){
-                    checkObject = jsonChildNode;
-                }
-                if(LessonTime.contains(dayOfWeek[day] + classtime[hour - 8].charAt(0))){
-                    checkObject = jsonChildNode;
-                }
-                /*String gmt = jsonChildNode.getString("LessonDate");
-                Date local = new Date(Long.parseLong(gmt) * 1000);
+                //date = jsonChildNode.getString("date");
+                /*Date local = new Date(Long.parseLong(gmt) * 1000);
                 String date = new SimpleDateFormat("yyyy-MM-dd,HH:mm", Locale.KOREA).format(local);
                 Log.i("Lesson", " " + name + "(" + classNo + ")");*/
-
+                /*if(date.contains(dayOfWeek[day] + classtime[hour - 9].charAt(0)) ||
+                        date.contains(dayOfWeek[day] + classtime[hour - 8].charAt(0))) {
+                    nfcJson = jsonChildNode;
+                    TextView nfcLesson = (TextView)findViewById(R.id.nfc_lesson);
+                    nfcLesson.setText(name);
+                }
+                */
                 mArray.add(new LessonInfo(name, code, classNo, teacher));
             }
         } catch (JSONException | NullPointerException e) {
             Toast.makeText(getApplicationContext(), "Error" + e.toString(), Toast.LENGTH_LONG).show();
             mResult = null;
         }
-
-
         mAdapter.notifyDataSetChanged();
     }
 

@@ -68,7 +68,7 @@ public class LessonActivity extends AppCompatActivity {
         requestCheck();
     }
     protected void requestCheck() {
-        String url = "http://172.20.10.3:8080/project/getCheckList?id=" + id + "&lessonCode=" + lessonCode + "&classNo=" + classNo;
+        String url = "http://172.20.10.3:9999/project/getCheckList?id=" + id + "&lessonCode=" + lessonCode + "&classNo=" + classNo;
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(url, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
@@ -105,9 +105,8 @@ public class LessonActivity extends AppCompatActivity {
                         break;
                 }
 
-                String gmt = jsonChildNode.getString("LessonDate");
-                Date local = new Date(Long.parseLong(gmt) * 1000);
-                String date = new SimpleDateFormat("yyyy-MM-dd,HH:mm", Locale.KOREA).format(local);
+                String date = jsonChildNode.getString("date");
+                //String date = new SimpleDateFormat("yyyy-MM-dd", Locale.KOREA).toString();
                 Log.i("Lesson", " " + name + "(" + classNo + ")");
 
                 mArray.add(new LessonInfo(name, date, status));
@@ -171,7 +170,7 @@ public class LessonActivity extends AppCompatActivity {
         public View getView(int position, View v, ViewGroup parent) {
             final LessonViewHolder viewHolder;
             if (v == null) {
-                v = mInflater.inflate(R.layout.lesson_item, parent, false);
+                v = mInflater.inflate(R.layout.check_item, parent, false);
 
                 viewHolder = new LessonViewHolder();
                 viewHolder.txName = (TextView) v.findViewById(R.id.lesson_name);
